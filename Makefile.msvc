@@ -1,0 +1,26 @@
+#
+# Makefile for creating bundles of MSVC's binaries in the same way as we make
+# the zip bundles for ALL other OSes.
+#
+# Usage: make -f Makefile.msvc PLATFORM=[Win32|x64] BUNDLE_NAME=openttd-<version>-win[32|64]
+#   or   make -f Makefile.msvc PLATFORM=[Win32|x64] BUNDLE_NAME=OTTD-win[32|64]-nightly-<revision>
+#
+
+# Check if we want to show what we are doing
+ifdef VERBOSE
+	Q =
+else
+	Q = @
+endif
+
+AWK = "awk"
+ROOT_DIR := $(shell pwd)
+BUNDLE_DIR = "$(ROOT_DIR)/bundle"
+BUNDLES_DIR = "$(ROOT_DIR)/bundles"
+CATCODEC = "catcodec.exe"
+OS = "windows"
+
+all:
+	cl /MT /Ot /W2 /RTC1 /EHsc /DWIN32 catcodec.cpp io.cpp sample.cpp
+
+include Makefile.bundle
