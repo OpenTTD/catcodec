@@ -70,6 +70,8 @@ Sample::Sample(FileReader &reader) :
 
 Sample::Sample(string filename, string name) :
 	offset(0),
+	name(name),
+	filename(filename),
 	sample_data(NULL)
 {
 	FileReader sample_reader(filename);
@@ -98,7 +100,7 @@ void Sample::ReadSample(FileReader &reader, bool check_size)
 	if (reader.ReadWord()  != 1     ) throw "Unexpected audio format; expected \"PCM\" in " + reader.GetFilename();
 
 	this->num_channels = reader.ReadWord();
-	if (this->num_channels != 1) throw "Unexpected number of audio channels; expected 1in " + reader.GetFilename();
+	if (this->num_channels != 1) throw "Unexpected number of audio channels; expected 1 in " + reader.GetFilename();
 
 	this->sample_rate = reader.ReadDword();
 	if (this->sample_rate != 11025 && this->sample_rate != 22050 && this->sample_rate != 44100) throw "Unexpected same rate; expected 11025, 22050 or 44100 in " + reader.GetFilename();
