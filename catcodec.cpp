@@ -26,6 +26,7 @@
 #include "stdafx.h"
 #include "io.hpp"
 #include "sample.hpp"
+#include "rev.hpp"
 
 /** Are we run interactively, i.e. from the console, or from a script? */
 static bool _interactive;
@@ -167,6 +168,7 @@ static void WriteSFO(Samples &samples, FileWriter &writer)
 void ShowHelp(const char *cmd)
 {
 	printf(
+		"catcodec version %s - Copyright (C) 2009 by Remko Bijker\n"
 		"Usage:\n"
 		"  %s -d <sample file>\n"
 		"    Decode all samples in the sample file and put them in this directory\n"
@@ -178,7 +180,7 @@ void ShowHelp(const char *cmd)
 		"catcodec is Copyright (c) 2009 by Remko Bijker\n"
 		"You may copy and redistribute it under the terms of the GNU General Public\n"
 		"License version 2, as stated in the file 'COPYING'\n",
-		cmd, cmd
+		_catcodec_version, cmd, cmd
 	);
 }
 

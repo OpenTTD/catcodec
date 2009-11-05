@@ -16,7 +16,7 @@ ROOT_DIR := $(shell pwd)
 BUNDLE_DIR = "$(ROOT_DIR)/bundle"
 BUNDLES_DIR = "$(ROOT_DIR)/bundles"
 CATCODEC = catcodec$(EXTENSION)
-OBJS = catcodec.o io.o sample.o
+OBJS = catcodec.o io.o sample.o rev.o
 OS = unknown
 
 CFLAGS += -Wall -Wcast-qual -Wwrite-strings -Wno-multichar
@@ -32,8 +32,14 @@ all: $(CATCODEC)
 $(CATCODEC): $(OBJS)
 	$(CXX) $(CFLAGS) -o $@ $^
 
+VERSION := $(shell ./findversion.sh | cut -f 1 -d'	')
+RES := $(shell if [ "`cat version.cache 2>/dev/null`" != "$(VERSION)" ]; then echo "$(VERSION)" > version.cache; fi )
+
+rev.cpp: version.cache rev.cpp.in
+	$(Q)cat rev.cpp.in | sed "s@\!\!VERSION\!\!@$(VERSION)@g" > rev.cpp
+
 clean:
-	rm -f $(OBJS) $(CATCODEC)
+	rm -f $(OBJS) $(CATCODEC) rev.cpp version.cache
 
 mrproper: clean
 	rm -rf $(BUNDLE_DIR) $(BUNDLES_DIR)
