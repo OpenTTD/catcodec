@@ -159,7 +159,7 @@ void ShowHelp(const char *cmd)
 		"\n"
 		"catcodec is Copyright (c) 2009 by Remko Bijker\n"
 		"You may copy and redistribute it under the terms of the GNU General Public\n"
-		"License, as stated in the file 'COPYING'\n",
+		"License version 2, as stated in the file 'COPYING'\n",
 		cmd, cmd
 	);
 }
@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
 	_interactive = isatty(fileno(stdout)) == 1;
 
 	try {
-		if (argc != 3) {
+		if (argc != 3 || (strcmp(argv[1], "-d") != 0 && strcmp(argv[1], "-e") != 0)) {
 			ShowHelp(argv[0]);
 			return 0;
 		}
@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
 		strncpy(sfo_file, argv[2], sizeof(sfo_file));
 		char *ext = strrchr(sfo_file, '.');
 		if (ext == NULL || strlen(ext) != 4 || strcmp(ext, ".cat") != 0) {
-			throw "Unexpected extension; expected \".cat\"";
+			throw string("Unexpected extension; expected \".cat\"");
 		}
 		strcpy(ext, ".sfo");
 
