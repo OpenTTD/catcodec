@@ -16,9 +16,13 @@ ROOT_DIR := $(shell pwd)
 BUNDLE_DIR = "$(ROOT_DIR)/bundle"
 BUNDLES_DIR = "$(ROOT_DIR)/bundles"
 CATCODEC = catcodec$(EXTENSION)
-CFLAGS += -Wall -Wcast-qual -Wwrite-strings -Wno-multichar -g -ggdb -Os
 OBJS = catcodec.o io.o sample.o
 OS = unknown
+
+CFLAGS += -Wall -Wcast-qual -Wwrite-strings -Wno-multichar
+ifdef DEBUG
+	CFLAGS += -g -ggdb
+endif
 
 all: $(CATCODEC)
 
