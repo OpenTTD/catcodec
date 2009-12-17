@@ -33,6 +33,7 @@ bundle: all
 	$(Q)mkdir -p "${BUNDLE_DIR}"
 	$(Q)cp "$(CATCODEC)"                      "$(BUNDLE_DIR)/"
 	$(Q)cp "$(ROOT_DIR)/COPYING"              "$(BUNDLE_DIR)/"
+	$(Q)cp "$(ROOT_DIR)/README"               "$(BUNDLE_DIR)/"
 	$(Q)cp catcodec.1                         "$(BUNDLE_DIR)/"
 ifeq ($(CATCODEC), catcodec.exe)
 	$(Q)unix2dos "$(BUNDLE_DIR)/COPYING"
