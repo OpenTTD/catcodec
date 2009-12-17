@@ -168,7 +168,7 @@ static void WriteSFO(Samples &samples, FileWriter &writer)
 void ShowHelp(const char *cmd)
 {
 	printf(
-		"catcodec version %s - Copyright (C) 2009 by Remko Bijker\n"
+		"catcodec version %s - Copyright 2009 by Remko Bijker\n"
 		"Usage:\n"
 		"  %s -d <sample file>\n"
 		"    Decode all samples in the sample file and put them in this directory\n"
@@ -177,7 +177,7 @@ void ShowHelp(const char *cmd)
 		"\n"
 		"<sample file> denotes the .cat file you want to work on, e.g. sample.cat\n"
 		"\n"
-		"catcodec is Copyright (c) 2009 by Remko Bijker\n"
+		"catcodec is Copyright 2009 by Remko Bijker\n"
 		"You may copy and redistribute it under the terms of the GNU General Public\n"
 		"License version 2, as stated in the file 'COPYING'\n",
 		_catcodec_version, cmd, cmd
