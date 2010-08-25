@@ -19,18 +19,26 @@ CATCODEC = catcodec$(EXTENSION)
 OBJS = catcodec.o io.o sample.o rev.o
 OS = unknown
 
-CFLAGS += -Wall -Wcast-qual -Wwrite-strings -Wno-multichar
+# Add some default CXXFLAGS only if there aren't dictated from the outside
+ifndef CXXFLAGS
+	CXXFLAGS = -Wall -Wcast-qual -Wwrite-strings
+endif
+
+# Regardless of the warning settings, we really do not want these errors.
+CXXFLAGS += -Wno-multichar
 ifdef DEBUG
-	CFLAGS += -g -ggdb
+	CXXFLAGS += -g -ggdb
 endif
 
 all: $(CATCODEC)
 
 %.o: %.cpp
-	$(CXX) $(CFLAGS) -c -o $@ $^
+	@echo '[CPP] $@'
+	$(Q)$(CXX) $(CXXFLAGS) -c -o $@ $^
 
 $(CATCODEC): $(OBJS)
-	$(CXX) $(CFLAGS) -o $@ $^
+	@echo '[LINK] $@'
+	$(Q)$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $^
 
 VERSION := $(shell ./findversion.sh | cut -f 1 -d'	')
 RES := $(shell if [ "`cat version.cache 2>/dev/null`" != "$(VERSION)" ]; then echo "$(VERSION)" > version.cache; fi )
@@ -39,9 +47,10 @@ rev.cpp: version.cache rev.cpp.in
 	$(Q)cat rev.cpp.in | sed "s@\!\!VERSION\!\!@$(VERSION)@g" > rev.cpp
 
 clean:
-	rm -f $(OBJS) $(CATCODEC) rev.cpp version.cache
+	@echo '[CLEAN]'
+	$(Q)rm -f $(OBJS) $(CATCODEC) rev.cpp version.cache
 
 mrproper: clean
-	rm -rf $(BUNDLE_DIR) $(BUNDLES_DIR)
+	$(Q)rm -rf $(BUNDLE_DIR) $(BUNDLES_DIR)
 
 include Makefile.bundle

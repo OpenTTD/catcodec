@@ -27,17 +27,41 @@ ifndef BUNDLE_NAME
 BUNDLE_NAME = catcodec-custom-$(REV)-$(OS)
 endif
 
+ifndef INSTALL_DOCS_DIR
+INSTALL_DOCS_DIR := "$(DESTDIR)/usr/share/doc/catcodec"
+endif
+
+ifndef INSTALL_BINARY_DIR
+INSTALL_BINARY_DIR := "$(DESTDIR)/usr/bin"
+endif
+
+ifndef INSTALL_MAN_DIR
+INSTALL_MAN_DIR := "$(DESTDIR)/usr/share/man/man1"
+endif
+
+
 bundle: all
 	@echo '[BUNDLE] Constructing bundle'
-	$(Q)rm -rf   "${BUNDLE_DIR}"
-	$(Q)mkdir -p "${BUNDLE_DIR}"
+	$(Q)rm -rf   "$(BUNDLE_DIR)"
+	$(Q)mkdir -p "$(BUNDLE_DIR)"
 	$(Q)cp "$(CATCODEC)"                      "$(BUNDLE_DIR)/"
 	$(Q)cp "$(ROOT_DIR)/COPYING"              "$(BUNDLE_DIR)/"
-	$(Q)cp "$(ROOT_DIR)/README"               "$(BUNDLE_DIR)/"
+	$(Q)cp "$(ROOT_DIR)/README"               "$(BUNDLE_DIR)/readme.txt"
 	$(Q)cp catcodec.1                         "$(BUNDLE_DIR)/"
+	$(Q)gzip -9                               "$(BUNDLE_DIR)/catcodec.1"
 ifeq ($(CATCODEC), catcodec.exe)
 	$(Q)unix2dos "$(BUNDLE_DIR)/COPYING"
+	$(Q)unix2dos "$(BUNDLE_DIR)/"*.txt
 endif
+
+install: bundle
+	@echo '[INSTALL] Installing catcodec'
+	$(Q)install -d "$(INSTALL_DOCS_DIR)"
+	$(Q)install -d "$(INSTALL_BINARY_DIR)"
+	$(Q)install -d "$(INSTALL_MAN_DIR)"
+	$(Q)install -m 755 "$(BUNDLE_DIR)/$(CATCODEC)" "$(INSTALL_BINARY_DIR)/$(CATCODEC)"
+	$(Q)install -m 644 "$(BUNDLE_DIR)/readme.txt" "$(INSTALL_DOCS_DIR)"
+	$(Q)install -m 644 "$(BUNDLE_DIR)/catcodec.1.gz" "$(INSTALL_MAN_DIR)/catcodec.1.gz"
 
 ### Packing the current bundle into several compressed file formats ###
 #
