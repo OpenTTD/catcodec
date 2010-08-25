@@ -32,23 +32,25 @@ endif
 
 all: $(CATCODEC)
 
-%.o: %.cpp
+objs/%.o: src/%.cpp
+	$(Q)mkdir -p objs
 	@echo '[CPP] $@'
-	$(Q)$(CXX) $(CXXFLAGS) -c -o $@ $^
+	$(Q)$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-$(CATCODEC): $(OBJS)
+$(CATCODEC): $(OBJS:%=objs/%)
 	@echo '[LINK] $@'
-	$(Q)$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $^
+	$(Q)$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $^
 
 VERSION := $(shell ./findversion.sh | cut -f 1 -d'	')
 RES := $(shell if [ "`cat version.cache 2>/dev/null`" != "$(VERSION)" ]; then echo "$(VERSION)" > version.cache; fi )
 
-rev.cpp: version.cache rev.cpp.in
-	$(Q)cat rev.cpp.in | sed "s@\!\!VERSION\!\!@$(VERSION)@g" > rev.cpp
+src/rev.cpp: version.cache src/rev.cpp.in
+	$(Q)cat src/rev.cpp.in | sed "s@\!\!VERSION\!\!@$(VERSION)@g" > src/rev.cpp
 
 clean:
 	@echo '[CLEAN]'
-	$(Q)rm -f $(OBJS) $(CATCODEC) rev.cpp version.cache
+	$(Q)rm -f $(CATCODEC) rev.cpp version.cache
+	$(Q)rm -rf objs
 
 mrproper: clean
 	$(Q)rm -rf $(BUNDLE_DIR) $(BUNDLES_DIR)

@@ -46,8 +46,8 @@ bundle: all
 	$(Q)mkdir -p "$(BUNDLE_DIR)"
 	$(Q)cp "$(CATCODEC)"                      "$(BUNDLE_DIR)/"
 	$(Q)cp "$(ROOT_DIR)/COPYING"              "$(BUNDLE_DIR)/"
-	$(Q)cp "$(ROOT_DIR)/README"               "$(BUNDLE_DIR)/readme.txt"
-	$(Q)cp catcodec.1                         "$(BUNDLE_DIR)/"
+	$(Q)cp "$(ROOT_DIR)/docs/readme.txt"      "$(BUNDLE_DIR)/"
+	$(Q)cp "$(ROOT_DIR)/docs/catcodec.1"      "$(BUNDLE_DIR)/"
 	$(Q)gzip -9                               "$(BUNDLE_DIR)/catcodec.1"
 ifeq ($(CATCODEC), catcodec.exe)
 	$(Q)unix2dos "$(BUNDLE_DIR)/COPYING"

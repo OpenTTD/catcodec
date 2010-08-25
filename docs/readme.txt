@@ -1,6 +1,6 @@
 catcodec README
-Last updated:    2009-12-17
-Release version: 0.1.0
+Last updated:    2010-08-25
+Release version: 1.0.1
 ------------------------------------------------------------------------
 
 

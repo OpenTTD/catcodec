@@ -27,12 +27,12 @@ CATCODEC = "catcodec.exe"
 OS = "windows"
 
 all: rev.cpp
-	cl /MT /Ot /W2 /RTC1 /EHsc /DWIN32 catcodec.cpp io.cpp sample.cpp rev.cpp
+	cl /MT /Ot /W2 /RTC1 /EHsc /DWIN32 src/catcodec.cpp src/io.cpp src/sample.cpp src/rev.cpp
 
 VERSION := $(shell ./findversion.sh | cut -f 1 -d'	')
 RES := $(shell if [ "`cat version.cache 2>/dev/null`" != "$(VERSION)" ]; then echo "$(VERSION)" > version.cache; fi )
 
-rev.cpp: version.cache rev.cpp.in
-	$(Q)cat rev.cpp.in | sed "s@\!\!VERSION\!\!@$(VERSION)@g" > rev.cpp
+src/rev.cpp: version.cache src/rev.cpp.in
+	$(Q)cat src/rev.cpp.in | sed "s@\!\!VERSION\!\!@$(VERSION)@g" > src/rev.cpp
 
 include Makefile.bundle
