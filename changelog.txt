@@ -1,3 +1,8 @@
+1.0.2 (2010-10-20)
+------------------------------------------------------------------------
+- Change: Sync installing options with GRFCodec and NFORenum to make packaging more unified for downstream
+
+
 1.0.1 (2010-08-25)
 ------------------------------------------------------------------------
 - Add: Support for "make install" with DESTDIR support like GRFCodec and NFORenum

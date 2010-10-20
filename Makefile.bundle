@@ -9,6 +9,21 @@
 # Creation of bundles
 #
 
+# Standard make convention variables/locations
+prefix         ?= /usr/local
+exec_prefix    ?= $(prefix)
+datarootdir    ?= $(prefix)/share
+datadir        ?= $(datarootdir)
+
+bindir         ?= $(exec_prefix)/bin
+mandir         ?= $(datarootdir)/man
+man1dir        ?= $(mandir)/man1
+docdir         ?= $(datarootdir)/doc/$(PACKAGE_NAME)
+
+openttddir     ?= $(datarootdir}/openttd
+openttdgmdir   ?= $(openttddir)/gm/$(PACKAGE_NAME)
+openttddatadir ?= $(openttddir)/data/$(PACKAGE_NAME)
+
 # The revision is needed for the bundle name and creating an OSX application bundle.
 ifdef REVISION
 REV := $(REVISION)
@@ -27,29 +42,18 @@ ifndef BUNDLE_NAME
 BUNDLE_NAME = catcodec-custom-$(REV)-$(OS)
 endif
 
-ifndef INSTALL_DOCS_DIR
-INSTALL_DOCS_DIR := "$(DESTDIR)/usr/share/doc/catcodec"
-endif
-
-ifndef INSTALL_BINARY_DIR
-INSTALL_BINARY_DIR := "$(DESTDIR)/usr/bin"
-endif
-
-ifndef INSTALL_MAN_DIR
-INSTALL_MAN_DIR := "$(DESTDIR)/usr/share/man/man1"
-endif
-
-
 bundle: all
 	@echo '[BUNDLE] Constructing bundle'
 	$(Q)rm -rf   "$(BUNDLE_DIR)"
 	$(Q)mkdir -p "$(BUNDLE_DIR)"
+	$(Q)mkdir -p "$(BUNDLE_DIR)/docs"
+	$(Q)mkdir -p "$(BUNDLE_DIR)/man"
 	$(Q)cp "$(CATCODEC)"                      "$(BUNDLE_DIR)/"
 	$(Q)cp "$(ROOT_DIR)/COPYING"              "$(BUNDLE_DIR)/"
 	$(Q)cp "$(ROOT_DIR)/changelog.txt"        "$(BUNDLE_DIR)/"
-	$(Q)cp "$(ROOT_DIR)/docs/readme.txt"      "$(BUNDLE_DIR)/"
-	$(Q)cp "$(ROOT_DIR)/docs/catcodec.1"      "$(BUNDLE_DIR)/"
-	$(Q)gzip -9                               "$(BUNDLE_DIR)/catcodec.1"
+	$(Q)cp "$(ROOT_DIR)/docs/readme.txt"      "$(BUNDLE_DIR)/docs/"
+	$(Q)cp "$(ROOT_DIR)/docs/catcodec.1"      "$(BUNDLE_DIR)/man/"
+	$(Q)gzip -9                               "$(BUNDLE_DIR)/man/catcodec.1"
 ifeq ($(CATCODEC), catcodec.exe)
 	$(Q)unix2dos "$(BUNDLE_DIR)/COPYING"
 	$(Q)unix2dos "$(BUNDLE_DIR)/"*.txt
@@ -57,12 +61,24 @@ endif
 
 install: bundle
 	@echo '[INSTALL] Installing catcodec'
-	$(Q)install -d "$(INSTALL_DOCS_DIR)"
-	$(Q)install -d "$(INSTALL_BINARY_DIR)"
-	$(Q)install -d "$(INSTALL_MAN_DIR)"
-	$(Q)install -m 755 "$(BUNDLE_DIR)/$(CATCODEC)" "$(INSTALL_BINARY_DIR)/$(CATCODEC)"
-	$(Q)install -m 644 "$(BUNDLE_DIR)/"*.txt "$(INSTALL_DOCS_DIR)"
-	$(Q)install -m 644 "$(BUNDLE_DIR)/catcodec.1.gz" "$(INSTALL_MAN_DIR)/catcodec.1.gz"
+	$(Q)install -d "$(DESTDIR)$(bindir)"
+	$(Q)install -m 755 "$(BUNDLE_DIR)/$(CATCODEC)" "$(DESTDIR)$(bindir)/"
+ifndef DO_NOT_INSTALL_DOCS
+	$(_C)install -d "$(DESTDIR)$(docdir)"
+	$(_C)install -m 644 "$(BUNDLE_DIR)/docs/"* "$(DESTDIR)$(docdir)"
+endif
+ifndef DO_NOT_INSTALL_CHANGELOG
+	$(_C)install -d "$(DESTDIR)$(docdir)"
+	$(_C)install -m 644 "$(BUNDLE_DIR)/changelog.txt" "$(DESTDIR)$(docdir)"
+endif
+ifndef DO_NOT_INSTALL_LICENSE
+	$(_C)install -d "$(DESTDIR)$(docdir)"
+	$(_C)install -m 644 "$(BUNDLE_DIR)/COPYING" "$(DESTDIR)$(docdir)"
+endif
+ifndef DO_NOT_INSTALL_MAN
+	$(_C)install -d "$(DESTDIR)$(man1dir)"
+	$(_C)install -m 644 "$(BUNDLE_DIR)/man/"*.1.gz "$(DESTDIR)$(man1dir)/"
+endif
 
 ### Packing the current bundle into several compressed file formats ###
 #
