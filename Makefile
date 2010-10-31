@@ -18,6 +18,7 @@ BUNDLES_DIR = "$(ROOT_DIR)/bundles"
 CATCODEC = catcodec$(EXTENSION)
 OBJS = catcodec.o io.o sample.o rev.o
 OS = unknown
+PACKAGE_NAME = catcodec
 
 # Add some default CXXFLAGS only if there aren't dictated from the outside
 ifndef CXXFLAGS

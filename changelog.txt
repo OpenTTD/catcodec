@@ -1,3 +1,8 @@
+1.0.3 (2010-10-31)
+------------------------------------------------------------------------
+- Fix: Documentation got installed into the wrong directory
+
+
 1.0.2 (2010-10-20)
 ------------------------------------------------------------------------
 - Change: Sync installing options with GRFCodec and NFORenum to make packaging more unified for downstream
