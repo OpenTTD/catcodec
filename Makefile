@@ -1,6 +1,13 @@
 # $Id$
 
-# This file is part of catcodec.
+# =========================================================
+# Makefile for the catcodec program
+#
+#       Don't put any local configuration in here
+#       Change Makefile.local instead, it'll be
+#       preserved when updating the sources
+# =========================================================
+#
 # catcodec is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # catcodec is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with catcodec. If not, see <http://www.gnu.org/licenses/>.
@@ -11,19 +18,21 @@ else
 	Q = @
 endif
 
-AWK = "awk"
+
 ROOT_DIR := $(shell pwd)
-BUNDLE_DIR = "$(ROOT_DIR)/bundle"
-BUNDLES_DIR = "$(ROOT_DIR)/bundles"
-CATCODEC = catcodec$(EXTENSION)
-OBJS = catcodec.o io.o sample.o rev.o
-OS = unknown
 PACKAGE_NAME = catcodec
 
-# Add some default CXXFLAGS only if there aren't dictated from the outside
-ifndef CXXFLAGS
-	CXXFLAGS = -Wall -Wcast-qual -Wwrite-strings
-endif
+-include Makefile.local
+
+AWK          ?= "awk"
+BUNDLE_DIR   ?= "$(ROOT_DIR)/bundle"
+BUNDLES_DIR  ?= "$(ROOT_DIR)/bundles"
+CATCODEC     ?= catcodec$(EXTENSION)
+CXXFLAGS     ?= -Wall -Wcast-qual -Wwrite-strings
+OS           ?= unknown
+
+
+OBJS = catcodec.o io.o sample.o rev.o
 
 # Regardless of the warning settings, we really do not want these errors.
 CXXFLAGS += -Wno-multichar

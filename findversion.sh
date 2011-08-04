@@ -56,5 +56,5 @@ EOF
 exit 1;
 fi
 
-VERSION="1.0.3"
+VERSION="1.0.4"
 echo "$VERSION	$VERSION	0	$VERSION"
