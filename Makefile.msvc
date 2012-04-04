@@ -26,8 +26,8 @@ BUNDLES_DIR = "$(ROOT_DIR)/bundles"
 CATCODEC = "catcodec.exe"
 OS = "windows"
 
-all: rev.cpp
-	cl /MT /Ot /W2 /RTC1 /EHsc /DWIN32 src/catcodec.cpp src/io.cpp src/sample.cpp src/rev.cpp
+all: src/catcodec.cpp src/io.cpp src/sample.cpp src/rev.cpp
+	cmd /c make.bat
 
 VERSION := $(shell ./findversion.sh | cut -f 1 -d'	')
 RES := $(shell if [ "`cat version.cache 2>/dev/null`" != "$(VERSION)" ]; then echo "$(VERSION)" > version.cache; fi )

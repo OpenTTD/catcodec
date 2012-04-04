@@ -31,7 +31,6 @@
 #include <assert.h>
 #include <errno.h>
 #include <string>
-#include <unistd.h>
 
 #if defined(_MSC_VER)
 	typedef unsigned char    uint8_t;
@@ -54,6 +53,8 @@
 	#include <io.h>
 	#define isatty _isatty
 	#define unlink _unlink
+#else
+	#include <unistd.h>
 #endif
 
 #define assert_compile(expr) extern const int __ct_assert__[1 - 2 * !(expr)] UNUSED

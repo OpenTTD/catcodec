@@ -29,7 +29,7 @@ ifdef REVISION
 REV := $(REVISION)
 else
 # Detect the revision
-VERSIONS := $(shell AWK="$(AWK)" "$(ROOT_DIR)/findversion.sh")
+VERSIONS := $(shell AWK="$(AWK)" "./findversion.sh")
 REV      := $(shell echo "$(VERSIONS)" | cut -f 1 -d'	')
 endif
 
