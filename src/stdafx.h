@@ -31,6 +31,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <string>
+#include <unistd.h>
 
 #if defined(_MSC_VER)
 	typedef unsigned char    uint8_t;

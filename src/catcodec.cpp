@@ -20,9 +20,6 @@
 
 /** @file catcodec.cpp Encoding and decoding of "cat" files */
 
-#include <stdlib.h>
-#include <string.h>
-
 #include "stdafx.h"
 #include "io.hpp"
 #include "sample.hpp"
