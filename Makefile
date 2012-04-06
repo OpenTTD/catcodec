@@ -59,7 +59,7 @@ src/rev.cpp: version.cache src/rev.cpp.in
 
 clean:
 	@echo '[CLEAN]'
-	$(Q)rm -f $(CATCODEC) rev.cpp version.cache
+	$(Q)rm -f $(CATCODEC) src/rev.cpp version.cache
 	$(Q)rm -rf objs
 
 mrproper: clean
