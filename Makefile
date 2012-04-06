@@ -45,7 +45,7 @@ all: $(CATCODEC)
 objs/%.o: src/%.cpp
 	$(Q)mkdir -p objs
 	@echo '[CPP] $@'
-	$(Q)$(CXX) $(CXXFLAGS) -c -o $@ $<
+	$(Q)$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 $(CATCODEC): $(OBJS:%=objs/%)
 	@echo '[LINK] $@'
