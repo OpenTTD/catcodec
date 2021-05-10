@@ -235,7 +235,7 @@ int main(int argc, char *argv[])
 		}
 		if (_interactive) printf("\nDone\n");
 
-	} catch (string s) {
+	} catch (const string &s) {
 		fprintf(stderr, "An error occured: %s\n", s.c_str());
 		ret = -1;
 	}
