@@ -93,6 +93,7 @@ Sample::Sample(string filename, string name) :
 	sample_data(NULL)
 {
 	FileReader sample_reader(filename);
+	this->size = sample_reader.GetSize();
 	this->ReadSample(sample_reader, false);
 }
 
@@ -105,46 +106,8 @@ void Sample::ReadSample(FileReader &reader, bool check_size)
 {
 	assert(this->sample_data == NULL);
 
-	if (reader.ReadDword() != 'FFIR') throw "Unexpected chunk; expected \"RIFF\" in " + reader.GetFilename();
-
-	if (check_size) {
-		if (reader.ReadDword() + 8  != size  ) throw "Unexpected RIFF chunk size in " + reader.GetFilename();
-	} else {
-		this->size = reader.ReadDword() + 8;
-	}
-	if (reader.ReadDword() != 'EVAW') throw "Unexpected format; expected \"WAVE\" in " + reader.GetFilename();
-	if (reader.ReadDword() != ' tmf') throw "Unexpected format; expected \"fmt \" in " + reader.GetFilename();
-	if (reader.ReadDword() != 16    ) throw "Unexpected fmt chunk size in " + reader.GetFilename();
-	if (reader.ReadWord()  != 1     ) throw "Unexpected audio format; expected \"PCM\" in " + reader.GetFilename();
-
-	this->num_channels = reader.ReadWord();
-	if (this->num_channels != 1) throw "Unexpected number of audio channels; expected 1 in " + reader.GetFilename();
-
-	this->sample_rate = reader.ReadDword();
-	if (this->sample_rate != 11025 && this->sample_rate != 22050 && this->sample_rate != 44100) throw "Unexpected same rate; expected 11025, 22050 or 44100 in " + reader.GetFilename();
-
-	/* Read these and validate them later on.
-	 * Saving them is unnecesary as they can be easily calucated. */
-	uint32_t byte_rate   = reader.ReadDword();
-	uint16_t block_align = reader.ReadWord();
-
-	this->bits_per_sample = reader.ReadWord();
-	if (this->bits_per_sample != 8 && this->bits_per_sample != 16) throw "Unexpected number of bits per channel; expected 8 or 16 in " + reader.GetFilename();
-
-	if (byte_rate != this->sample_rate * this->num_channels * this->bits_per_sample / 8) throw "Unexpected byte rate in " + reader.GetFilename();
-	if (block_align != this->num_channels * this->bits_per_sample / 8) throw "Unexpected block align in " + reader.GetFilename();
-
-	if (reader.ReadDword() != 'atad') throw "Unexpected chunk; expected \"data\" in " + reader.GetFilename();
-
-	/* Sometimes the files are padded, which causes them to start at the
-	 * wrong offset further on, so just read whatever amount of data was
-	 * specified in the top RIFF as long as sample size is within those
-	 * boundaries, i.e. within the RIFF. */
-	this->sample_size = reader.ReadDword();
-	if (this->sample_size + RIFF_HEADER_SIZE > size) throw "Unexpected data chunk size in " + reader.GetFilename();
-
-	this->sample_data = (uint8_t *)malloc(this->size - RIFF_HEADER_SIZE);
-	reader.ReadRaw(this->sample_data, this->size - RIFF_HEADER_SIZE);
+	this->sample_data = (uint8_t *)malloc(this->size);
+	reader.ReadRaw(this->sample_data, this->size);
 }
 
 void Sample::ReadCatEntry(FileReader &reader, bool new_format)
@@ -184,22 +147,7 @@ void Sample::WriteSample(FileWriter &writer) const
 {
 	assert(this->sample_data != NULL);
 
-	writer.WriteDword('FFIR');
-	writer.WriteDword(this->size - 8);
-	writer.WriteDword('EVAW');
-
-	writer.WriteDword(' tmf');
-	writer.WriteDword(16);
-	writer.WriteWord(1);
-	writer.WriteWord(this->num_channels);
-	writer.WriteDword(this->sample_rate);
-	writer.WriteDword(this->sample_rate * this->num_channels * this->bits_per_sample / 8);
-	writer.WriteWord(this->num_channels * this->bits_per_sample / 8);
-	writer.WriteWord(this->bits_per_sample);
-
-	writer.WriteDword('atad');
-	writer.WriteDword(this->sample_size);
-	writer.WriteRaw(this->sample_data, this->size - RIFF_HEADER_SIZE);
+	writer.WriteRaw(this->sample_data, this->size);
 }
 
 void Sample::WriteCatEntry(FileWriter &writer) const
