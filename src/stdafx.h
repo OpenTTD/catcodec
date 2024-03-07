@@ -37,6 +37,7 @@
 #	define UNUSED
 
 #	define fileno _fileno
+#	define strcasecmp _stricmp
 #	pragma warning(disable : 4996) // 'strdup' was declared deprecated
 #elif defined(__GNUC__)
 #	include <stdint.h>
