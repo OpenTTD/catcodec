@@ -31,6 +31,7 @@ typedef std::string string;
  */
 class FileReader {
 	FILE *file;      ///< The file to be read by this instance
+	size_t filesize; ///< The size of the file
 	string filename; ///< The filename of the file
 
 public:
@@ -46,6 +47,7 @@ public:
 	 */
 	~FileReader();
 
+	size_t GetSize() const { return this->filesize; }
 
 	/**
 	 * Read a single byte from the stream.
