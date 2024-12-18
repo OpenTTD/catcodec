@@ -23,15 +23,12 @@
 #ifndef IO_H
 #define IO_H
 
-/** A string is a string; simple as that */
-typedef std::string string;
-
 /**
  * Simple class to perform binary and string reading from a file.
  */
 class FileReader {
 	FILE *file;      ///< The file to be read by this instance
-	string filename; ///< The filename of the file
+	std::string filename; ///< The filename of the file
 
 public:
 	/**
@@ -39,7 +36,7 @@ public:
 	 * @param filename the file to read from
 	 * @param binary   read the file as binary or text?
 	 */
-	FileReader(string filename, bool binary = true);
+	FileReader(const std::string &filename, bool binary = true);
 
 	/**
 	 * Cleans up our mess
@@ -96,7 +93,7 @@ public:
 	 * Get the filename of this file.
 	 * @return the filename
 	 */
-	string GetFilename() const;
+	const std::string &GetFilename() const;
 };
 
 /**
@@ -104,8 +101,8 @@ public:
  */
 class FileWriter {
 	FILE *file;          ///< The file to be read by this instance
-	string filename;     ///< The filename of the file
-	string filename_new; ///< The filename for the temporary file
+	std::string filename;     ///< The filename of the file
+	std::string filename_new; ///< The filename for the temporary file
 
 public:
 	/**
@@ -113,7 +110,7 @@ public:
 	 * @param filename the file to write to
 	 * @param binary   write the file as binary or text?
 	 */
-	FileWriter(string filename, bool binary = true);
+	FileWriter(const std::string &filename, bool binary = true);
 
 	/**
 	 * Cleans up our mess
@@ -162,7 +159,7 @@ public:
 	 * Get the filename of this file.
 	 * @return the filename
 	 */
-	string GetFilename() const;
+	const std::string &GetFilename() const;
 
 	/**
 	 * Close the output, i.e. commit the file to disk.

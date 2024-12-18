@@ -23,7 +23,7 @@
 #include "stdafx.h"
 #include "io.hpp"
 
-FileReader::FileReader(string filename, bool binary)
+FileReader::FileReader(const std::string &filename, bool binary)
 {
 	this->file = fopen(filename.c_str(), binary ? "rb" : "r");
 	this->filename = filename;
@@ -84,13 +84,13 @@ uint32_t FileReader::GetPos()
 	return ftell(this->file);
 }
 
-string FileReader::GetFilename() const
+const std::string &FileReader::GetFilename() const
 {
 	return this->filename;
 }
 
 
-FileWriter::FileWriter(string filename, bool binary)
+FileWriter::FileWriter(const std::string &filename, bool binary)
 {
 	this->filename_new = filename + ".new";
 	this->filename = filename;
@@ -156,7 +156,7 @@ uint32_t FileWriter::GetPos()
 	return ftell(this->file);
 }
 
-string FileWriter::GetFilename() const
+const std::string &FileWriter::GetFilename() const
 {
 	return this->filename;
 }
@@ -168,7 +168,7 @@ void FileWriter::Close()
 	this->file = NULL;
 
 	/* Then remove the existing .bak file */
-	string filename_bak = this->filename + ".bak";
+	std::string filename_bak = this->filename + ".bak";
 	if (unlink(filename_bak.c_str()) != 0 && errno != ENOENT) {
 		fprintf(stderr, "Warning: could not remove %s (%s)\n", filename_bak.c_str(), strerror(errno));
 	}

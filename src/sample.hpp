@@ -34,8 +34,8 @@ private:
 	uint32_t offset;          ///< Offset from the begin of the cat
 	uint32_t size;            ///< The size of the WAV RIFF, i.e. excluding name and filename
 
-	string name;              ///< The name of the sample
-	string filename;          ///< The filename of the sample
+	std::string name;              ///< The name of the sample
+	std::string filename;          ///< The filename of the sample
 
 	uint16_t num_channels;    ///< Number of channels; either 1 or 2
 	uint32_t sample_rate;     ///< Sample rate; either 11025, 22050 or 44100
@@ -58,7 +58,7 @@ public:
 	 * @param filename the file to read the sample from
 	 * @param name     the name of the sample
 	 */
-	Sample(string filename, string name);
+	Sample(const std::string &filename, const std::string &name);
 
 	/**
 	 * Reads a sample from a reader.
@@ -95,13 +95,13 @@ public:
 	 * Get the name of the sample.
 	 * @return the name of the sample
 	 */
-	string GetName() const;
+	const std::string &GetName() const;
 
 	/**
 	 * Get the filename of the sample
 	 * @return the filename of the sample
 	 */
-	string GetFilename() const;
+	const std::string &GetFilename() const;
 
 
 	/**
