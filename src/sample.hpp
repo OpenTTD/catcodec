@@ -137,6 +137,6 @@ public:
 };
 
 /** Lets have us a vector of samples */
-typedef std::vector<Sample *> Samples;
+using Samples = std::vector<Sample>;
 
 #endif /* SAMPLE_HPP */
