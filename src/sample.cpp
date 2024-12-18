@@ -79,8 +79,7 @@ static void WriteString(const string str, FileWriter &writer)
 }
 
 
-Sample::Sample(FileReader &reader) :
-	sample_data(NULL)
+Sample::Sample(FileReader &reader)
 {
 	this->offset = reader.ReadDword() & 0x7FFFFFFF;
 	this->size   = reader.ReadDword();
@@ -89,21 +88,15 @@ Sample::Sample(FileReader &reader) :
 Sample::Sample(string filename, string name) :
 	offset(0),
 	name(name),
-	filename(filename),
-	sample_data(NULL)
+	filename(filename)
 {
 	FileReader sample_reader(filename);
 	this->ReadSample(sample_reader, false);
 }
 
-Sample::~Sample()
-{
-	free(this->sample_data);
-}
-
 void Sample::ReadSample(FileReader &reader, bool check_size)
 {
-	assert(this->sample_data == NULL);
+	assert(this->sample_data.empty());
 
 	if (reader.ReadDword() != 'FFIR') throw "Unexpected chunk; expected \"RIFF\" in " + reader.GetFilename();
 
@@ -143,13 +136,13 @@ void Sample::ReadSample(FileReader &reader, bool check_size)
 	this->sample_size = reader.ReadDword();
 	if (this->sample_size + RIFF_HEADER_SIZE > size) throw "Unexpected data chunk size in " + reader.GetFilename();
 
-	this->sample_data = (uint8_t *)malloc(this->size - RIFF_HEADER_SIZE);
-	reader.ReadRaw(this->sample_data, this->size - RIFF_HEADER_SIZE);
+	this->sample_data.resize(this->size - RIFF_HEADER_SIZE);
+	reader.ReadRaw(this->sample_data.data(), this->size - RIFF_HEADER_SIZE);
 }
 
 void Sample::ReadCatEntry(FileReader &reader, bool new_format)
 {
-	assert(this->sample_data == NULL);
+	assert(this->sample_data.empty());
 
 	if (reader.GetPos() != this->GetOffset()) throw "Invalid offset in file " + reader.GetFilename();
 
@@ -158,8 +151,8 @@ void Sample::ReadCatEntry(FileReader &reader, bool new_format)
 	if (!new_format && this->GetName().compare("Corrupt sound") == 0) {
 		/* In the old format there was one sample that was raw PCM. */
 		this->sample_size     = this->size;
-		this->sample_data     = (uint8_t *)malloc(this->sample_size);
-		reader.ReadRaw(this->sample_data, this->sample_size);
+		this->sample_data.resize(this->sample_size);
+		reader.ReadRaw(this->sample_data.data(), this->sample_size);
 
 		this->size += RIFF_HEADER_SIZE;
 	} else {
@@ -182,7 +175,7 @@ void Sample::ReadCatEntry(FileReader &reader, bool new_format)
 
 void Sample::WriteSample(FileWriter &writer) const
 {
-	assert(this->sample_data != NULL);
+	assert(!this->sample_data.empty());
 
 	writer.WriteDword('FFIR');
 	writer.WriteDword(this->size - 8);
@@ -199,12 +192,12 @@ void Sample::WriteSample(FileWriter &writer) const
 
 	writer.WriteDword('atad');
 	writer.WriteDword(this->sample_size);
-	writer.WriteRaw(this->sample_data, this->size - RIFF_HEADER_SIZE);
+	writer.WriteRaw(this->sample_data.data(), this->size - RIFF_HEADER_SIZE);
 }
 
 void Sample::WriteCatEntry(FileWriter &writer) const
 {
-	assert(this->sample_data != NULL);
+	assert(!this->sample_data.empty());
 
 	if (writer.GetPos() != this->GetOffset()) throw "Invalid offset when writing file " + writer.GetFilename();
 

@@ -42,7 +42,7 @@ private:
 	uint16_t bits_per_sample; ///< Number of bits per sample; either 8 or 16
 
 	uint32_t sample_size;     ///< The size of the raw data below
-	uint8_t *sample_data;     ///< The actual raw sample data
+	std::vector<uint8_t> sample_data; ///< The actual raw sample data
 
 public:
 	/**
@@ -59,12 +59,6 @@ public:
 	 * @param name     the name of the sample
 	 */
 	Sample(string filename, string name);
-
-	/**
-	 * Cleans up our mess.
-	 */
-	~Sample();
-
 
 	/**
 	 * Reads a sample from a reader.
