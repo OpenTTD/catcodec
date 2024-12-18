@@ -55,7 +55,7 @@ static const uint32_t RIFF_HEADER_SIZE = 44;
  * @param reader the reader to read from
  * @return the read string
  */
-static string ReadString(FileReader &reader)
+static std::string ReadString(FileReader &reader)
 {
 	uint8_t name_len = reader.ReadByte();
 	char buffer[256];
@@ -71,7 +71,7 @@ static string ReadString(FileReader &reader)
  * @param str    the string to write
  * @param writer the writer to write to
  */
-static void WriteString(const string str, FileWriter &writer)
+static void WriteString(const std::string &str, FileWriter &writer)
 {
 	uint8_t str_len = (uint8_t)(str.length() + 1);
 	writer.WriteByte(str_len);
@@ -85,7 +85,7 @@ Sample::Sample(FileReader &reader)
 	this->size   = reader.ReadDword();
 }
 
-Sample::Sample(string filename, string name) :
+Sample::Sample(const std::string &filename, const std::string &name) :
 	offset(0),
 	name(name),
 	filename(filename)
@@ -210,12 +210,12 @@ void Sample::WriteCatEntry(FileWriter &writer) const
 	WriteString(this->GetFilename(), writer);
 }
 
-string Sample::GetName() const
+const std::string &Sample::GetName() const
 {
 	return this->name;
 }
 
-string Sample::GetFilename() const
+const std::string &Sample::GetFilename() const
 {
 	return this->filename;
 }
