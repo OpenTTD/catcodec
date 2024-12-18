@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.16)
+
+install(FILES
+	${CMAKE_CURRENT_SOURCE_DIR}/catcodec.1
+	DESTINATION ${CMAKE_INSTALL_MANDIR}
+)
+
+install(FILES
+	${CMAKE_CURRENT_SOURCE_DIR}/readme.txt
+	DESTINATION ${CMAKE_INSTALL_DOCDIR}
+)
