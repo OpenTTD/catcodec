@@ -25,6 +25,7 @@
 
 #include <cstdarg>
 #include <cstdio>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 
@@ -33,9 +34,6 @@
 #include <string>
 
 #if defined(_MSC_VER)
-	typedef unsigned char    uint8_t;
-	typedef unsigned short   uint16_t;
-	typedef unsigned int     uint32_t;
 	#define UNUSED
 
 	#define fileno _fileno
