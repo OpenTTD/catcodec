@@ -23,7 +23,7 @@
 #include "stdafx.h"
 #include "io.hpp"
 #include "sample.hpp"
-#include "rev.hpp"
+#include "version.h"
 
 /** Are we run interactively, i.e. from the console, or from a script? */
 static bool _interactive;

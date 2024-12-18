@@ -7,27 +7,131 @@ on:
     - master
 
 jobs:
-  build:
-    name: Build
+  linux:
+    name: Linux
 
-    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
-         - os: windows-latest
-           makefile: Makefile.msvc
-         - os: ubuntu-latest
-           makefile: Makefile
+          - compiler: clang
+            cxxcompiler: clang++
+          - compiler: gcc
+            cxxcompiler: g++
+
+    runs-on: ubuntu-latest
+    env:
+      CC: ${{ matrix.compiler }}
+      CXX: ${{ matrix.cxxcompiler }}
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
-    - name: Set build environment
-      if: matrix.os == 'windows-latest'
+      uses: actions/checkout@v4
+
+    - name: Install GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@master
+
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+
+        echo "::group::CMake"
+        cmake ..
+        echo "::endgroup::"
+
+        echo "::group::Build"
+        echo "Running on $(nproc) cores"
+        cmake --build . -j $(nproc)
+        echo "::endgroup::"
+
+  macos:
+    name: Mac OS
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - arch: arm64
+          full_arch: arm64
+
+    runs-on: macos-latest
+    env:
+      MACOSX_DEPLOYMENT_TARGET: 10.13
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install GCC problem matcher
+      uses: ammaraskar/gcc-problem-matcher@master
+
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+
+        echo "::group::CMake"
+        cmake ${GITHUB_WORKSPACE} \
+          -DCMAKE_OSX_ARCHITECTURES=${{ matrix.full_arch }} \
+          # EOF
+        echo "::endgroup::"
+
+        echo "::group::Build"
+        echo "Running on $(sysctl -n hw.logicalcpu) cores"
+        cmake --build . -j $(sysctl -n hw.logicalcpu)
+        echo "::endgroup::"
+
+  windows:
+    name: Windows
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest]
+        arch: [x86, x64]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install MSVC problem matcher
+      uses: ammaraskar/msvc-problem-matcher@master
+
+    - name: Configure developer command prompt for ${{ matrix.arch }}
       uses: ilammy/msvc-dev-cmd@v1
       with:
-        arch: x86
+        arch: ${{ matrix.arch }}
+
     - name: Build
-      run: make -f ${{ matrix.makefile }}
       shell: bash
+      run: |
+        mkdir build
+        cd build
+
+        echo "::group::CMake"
+        cmake .. \
+          -GNinja \
+          # EOF
+        echo "::endgroup::"
+
+        echo "::group::Build"
+        cmake --build .
+        echo "::endgroup::"
+
+  check_annotations:
+    name: Check Annotations
+    needs:
+    - linux
+    - macos
+    - windows
+
+    if: always() && github.event_name == 'pull_request'
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check annotations
+      uses: OpenTTD/actions/annotation-check@v5
