@@ -52,11 +52,11 @@ static void ReadCat(Samples &samples, FileReader &reader)
 
 	reader.Seek(0);
 	for (uint32_t i = 0; i < count; i++) {
-		samples.push_back(new Sample(reader));
+		samples.emplace_back(reader);
 	}
 
-	for (Samples::iterator iter = samples.begin(); iter != samples.end(); iter++) {
-		(*iter)->ReadCatEntry(reader, new_format);
+	for (auto iter = samples.begin(); iter != samples.end(); ++iter) {
+		iter->ReadCatEntry(reader, new_format);
 		ShowProgress();
 	}
 }
@@ -69,18 +69,18 @@ static void ReadCat(Samples &samples, FileReader &reader)
 static void WriteCat(Samples &samples, FileWriter &writer)
 {
 	uint32_t offset = (uint32_t)samples.size() * 8;
-	for (Samples::iterator iter = samples.begin(); iter != samples.end(); iter++) {
-		Sample *sample = *iter;
+	for (auto iter = samples.begin(); iter != samples.end(); ++iter) {
+		Sample &sample = *iter;
 
-		sample->SetOffset(offset);
-		offset = sample->GetNextOffset();
+		sample.SetOffset(offset);
+		offset = sample.GetNextOffset();
 
-		writer.WriteDword(sample->GetOffset() | (1U << 31));
-		writer.WriteDword(sample->GetSize());
+		writer.WriteDword(sample.GetOffset() | (1U << 31));
+		writer.WriteDword(sample.GetSize());
 	}
 
-	for (Samples::iterator iter = samples.begin(); iter != samples.end(); iter++) {
-		(*iter)->WriteCatEntry(writer);
+	for (auto iter = samples.begin(); iter != samples.end(); ++iter) {
+		iter->WriteCatEntry(writer);
 		ShowProgress();
 	}
 }
@@ -129,7 +129,7 @@ static void ReadSFO(Samples &samples, FileReader &reader)
 		if (strlen(filename) + 1 > 255) throw "Filename is too long in " + reader.GetFilename() + " at [" + buffer + "]";
 		if (strlen(name)     + 1 > 255) throw "Name is too long in " + reader.GetFilename() + " at [" + name + "]";
 
-		samples.push_back(new Sample(filename, name));
+		samples.emplace_back(filename, name);
 
 		ShowProgress();
 	}
@@ -144,13 +144,13 @@ static void WriteSFO(Samples &samples, FileWriter &writer)
 {
 	writer.WriteString("// \"file name\" internal name\n");
 
-	for (Samples::iterator iter = samples.begin(); iter != samples.end(); iter++) {
-		Sample *sample = *iter;
+	for (auto iter = samples.begin(); iter != samples.end(); ++iter) {
+		Sample &sample = *iter;
 
-		writer.WriteString("\"%s\" %s\n", sample->GetFilename().c_str(), sample->GetName().c_str());
+		writer.WriteString("\"%s\" %s\n", sample.GetFilename().c_str(), sample.GetName().c_str());
 
-		FileWriter sample_writer(sample->GetFilename());
-		sample->WriteSample(sample_writer);
+		FileWriter sample_writer(sample.GetFilename());
+		sample.WriteSample(sample_writer);
 		sample_writer.Close();
 
 		ShowProgress();
@@ -240,10 +240,5 @@ int main(int argc, char *argv[])
 		ret = -1;
 	}
 
-	/* Clear up the samples */
-	while (samples.size() != 0) {
-		delete samples.back();
-		samples.pop_back();
-	}
 	return ret;
 }
