@@ -228,13 +228,15 @@ void Sample::SetOffset(uint32_t offset)
 
 uint32_t Sample::GetNextOffset() const
 {
-	return this->offset +
+	return static_cast<uint32_t>(
+			this->offset +
 			1 +                            // length of the name
 			(this->name.length() + 1) +    // the name + '\0'
 			this->size +                   // size of the data
 			1 +                            // the delimiter
 			1 +                            // length of the filename
-			(this->filename.length() + 1); // the filename + '\0'
+			(this->filename.length() + 1)  // the filename + '\0'
+	);
 }
 
 uint32_t Sample::GetOffset() const
