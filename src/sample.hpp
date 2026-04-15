@@ -41,7 +41,6 @@ private:
 	uint32_t sample_rate;     ///< Sample rate; either 11025, 22050 or 44100
 	uint16_t bits_per_sample; ///< Number of bits per sample; either 8 or 16
 
-	uint32_t sample_size;     ///< The size of the raw data below
 	std::vector<uint8_t> sample_data; ///< The actual raw sample data
 
 public:
