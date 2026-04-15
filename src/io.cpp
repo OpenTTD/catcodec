@@ -26,6 +26,9 @@
 FileReader::FileReader(const std::string &filename, bool binary)
 {
 	this->file = fopen(filename.c_str(), binary ? "rb" : "r");
+	fseek(this->file, 0, SEEK_END);
+	this->filesize = ftell(this->file);
+	fseek(this->file, 0, SEEK_SET);
 	this->filename = filename;
 
 	if (this->file == NULL) {
