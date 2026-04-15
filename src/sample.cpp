@@ -133,11 +133,11 @@ void Sample::ReadSample(FileReader &reader, bool check_size)
 	 * wrong offset further on, so just read whatever amount of data was
 	 * specified in the top RIFF as long as sample size is within those
 	 * boundaries, i.e. within the RIFF. */
-	this->sample_size = reader.ReadDword();
-	if (this->sample_size + RIFF_HEADER_SIZE > size) throw "Unexpected data chunk size in " + reader.GetFilename();
+	uint32_t sample_size = reader.ReadDword();
+	if (sample_size + RIFF_HEADER_SIZE > this->size) throw "Unexpected data chunk size in " + reader.GetFilename();
 
 	this->sample_data.resize(this->size - RIFF_HEADER_SIZE);
-	reader.ReadRaw(this->sample_data.data(), this->size - RIFF_HEADER_SIZE);
+	reader.ReadRaw(this->sample_data.data(), this->sample_data.size());
 }
 
 void Sample::ReadCatEntry(FileReader &reader, bool new_format)
@@ -150,9 +150,8 @@ void Sample::ReadCatEntry(FileReader &reader, bool new_format)
 
 	if (!new_format && this->GetName().compare("Corrupt sound") == 0) {
 		/* In the old format there was one sample that was raw PCM. */
-		this->sample_size     = this->size;
-		this->sample_data.resize(this->sample_size);
-		reader.ReadRaw(this->sample_data.data(), this->sample_size);
+		this->sample_data.resize(this->size);
+		reader.ReadRaw(this->sample_data.data(), this->sample_data.size());
 
 		this->size += RIFF_HEADER_SIZE;
 	} else {
@@ -189,8 +188,8 @@ void Sample::WriteSample(FileWriter &writer) const
 	writer.WriteWord(this->bits_per_sample);
 
 	writer.WriteDword('atad');
-	writer.WriteDword(this->sample_size);
-	writer.WriteRaw(this->sample_data.data(), this->size - RIFF_HEADER_SIZE);
+	writer.WriteDword(static_cast<uint32_t>(this->sample_data.size()));
+	writer.WriteRaw(this->sample_data.data(), this->sample_data.size());
 }
 
 void Sample::WriteCatEntry(FileWriter &writer) const
