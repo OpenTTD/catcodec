@@ -175,8 +175,6 @@ void Sample::ReadCatEntry(FileReader &reader, bool new_format)
 
 void Sample::WriteSample(FileWriter &writer) const
 {
-	assert(!this->sample_data.empty());
-
 	writer.WriteDword('FFIR');
 	writer.WriteDword(this->size - 8);
 	writer.WriteDword('EVAW');
@@ -197,8 +195,6 @@ void Sample::WriteSample(FileWriter &writer) const
 
 void Sample::WriteCatEntry(FileWriter &writer) const
 {
-	assert(!this->sample_data.empty());
-
 	if (writer.GetPos() != this->GetOffset()) throw "Invalid offset when writing file " + writer.GetFilename();
 
 	WriteString(this->GetName(), writer);
