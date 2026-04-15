@@ -94,14 +94,19 @@ Sample::Sample(const std::string &filename, const std::string &name) :
 	this->ReadSample(sample_reader, false);
 }
 
-void Sample::ReadSample(FileReader &reader, bool check_size)
+bool Sample::ReadSample(FileReader &reader, bool check_size)
 {
 	assert(this->sample_data.empty());
 
-	if (reader.ReadDword() != 'FFIR') throw "Unexpected chunk; expected \"RIFF\" in " + reader.GetFilename();
+	uint32_t pos = reader.GetPos();
+	if (reader.ReadDword() != 'FFIR') {
+		if (!check_size) throw "Unexpected chunk; expected \"RIFF\" in " + reader.GetFilename();
+		reader.Seek(pos);
+		return false;
+	}
 
 	if (check_size) {
-		if (reader.ReadDword() + 8  != size  ) throw "Unexpected RIFF chunk size in " + reader.GetFilename();
+		if (reader.ReadDword() + 8 != size) throw "Unexpected RIFF chunk size in " + reader.GetFilename();
 	} else {
 		this->size = reader.ReadDword() + 8;
 	}
@@ -138,9 +143,10 @@ void Sample::ReadSample(FileReader &reader, bool check_size)
 
 	this->sample_data.resize(this->size - RIFF_HEADER_SIZE);
 	reader.ReadRaw(this->sample_data.data(), this->sample_data.size());
+	return true;
 }
 
-void Sample::ReadCatEntry(FileReader &reader, bool new_format)
+void Sample::ReadCatEntry(FileReader &reader, bool new_format, uint32_t index)
 {
 	assert(this->sample_data.empty());
 
@@ -148,14 +154,13 @@ void Sample::ReadCatEntry(FileReader &reader, bool new_format)
 
 	this->name = ReadString(reader);
 
-	if (!new_format && this->GetName().compare("Corrupt sound") == 0) {
+	bool is_raw = !this->ReadSample(reader);
+	if (is_raw) {
 		/* In the old format there was one sample that was raw PCM. */
 		this->sample_data.resize(this->size);
 		reader.ReadRaw(this->sample_data.data(), this->sample_data.size());
 
 		this->size += RIFF_HEADER_SIZE;
-	} else {
-		this->ReadSample(reader);
 	}
 
 	if (!new_format) {
@@ -166,10 +171,16 @@ void Sample::ReadCatEntry(FileReader &reader, bool new_format)
 		this->bits_per_sample = 8;
 	}
 
-	/* Some kind of data byte, unused */
-	reader.ReadByte();
+	/* If name is 1 character then we're probably reading the DOS sample.cat, which does not contain filenames. */
+	if (!new_format && this->name.length() == 1) {
+		/* Construct a filename. */
+		this->filename = "wave" + std::to_string(index) + ".wav";
+	} else {
+		/* Some kind of data byte, unused */
+		reader.ReadByte();
 
-	this->filename = ReadString(reader);
+		this->filename = ReadString(reader);
+	}
 }
 
 void Sample::WriteSample(FileWriter &writer) const
