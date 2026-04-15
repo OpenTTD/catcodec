@@ -1,0 +1,26 @@
+## 1.x
+
+### 1.0.5 (2012-04-04)
+
+- Fix: compilation with GCC 4.7
+- Fix: makefile for compilation with MSVC
+
+### 1.0.4 (2011-08-04)
+
+- Change: add option for using Makefile.local
+
+### 1.0.3 (2010-10-31)
+
+- Fix: Documentation got installed into the wrong directory
+
+### 1.0.2 (2010-10-20)
+
+- Change: Sync installing options with GRFCodec and NFORenum to make packaging more unified for downstream
+
+### 1.0.1 (2010-08-25)
+
+- Add: Support for "make install" with DESTDIR support like GRFCodec and NFORenum
+
+### 1.0.0 (2009-12-18)
+
+- Add: Initial release
