@@ -31,15 +31,15 @@
  */
 class Sample {
 private:
-	uint32_t offset;          ///< Offset from the begin of the cat
-	uint32_t size;            ///< The size of the WAV RIFF, i.e. excluding name and filename
+	uint32_t offset = 0; ///< Offset from the begin of the cat
+	uint32_t size = 0; ///< The size of the WAV RIFF, i.e. excluding name and filename
 
-	std::string name;              ///< The name of the sample
-	std::string filename;          ///< The filename of the sample
+	std::string name; ///< The name of the sample
+	std::string filename; ///< The filename of the sample
 
-	uint16_t num_channels;    ///< Number of channels; either 1 or 2
-	uint32_t sample_rate;     ///< Sample rate; either 11025, 22050 or 44100
-	uint16_t bits_per_sample; ///< Number of bits per sample; either 8 or 16
+	uint32_t sample_rate = 0; ///< Sample rate; either 11025, 22050 or 44100
+	uint16_t num_channels = 0; ///< Number of channels; either 1 or 2
+	uint16_t bits_per_sample = 0; ///< Number of bits per sample; either 8 or 16
 
 	std::vector<uint8_t> sample_data; ///< The actual raw sample data
 

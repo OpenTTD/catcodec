@@ -91,7 +91,12 @@ Sample::Sample(const std::string &filename, const std::string &name) :
 	filename(filename)
 {
 	FileReader sample_reader(filename);
-	this->ReadSample(sample_reader, false);
+	if (!this->ReadSample(sample_reader, false)) {
+		/* File was not WAV, treat as raw. */
+		this->size = static_cast<uint32_t>(sample_reader.GetSize());
+		this->sample_data.resize(this->size);
+		sample_reader.ReadRaw(this->sample_data.data(), this->sample_data.size());
+	}
 }
 
 bool Sample::ReadSample(FileReader &reader, bool check_size)
@@ -100,7 +105,6 @@ bool Sample::ReadSample(FileReader &reader, bool check_size)
 
 	uint32_t pos = reader.GetPos();
 	if (reader.ReadDword() != 'FFIR') {
-		if (!check_size) throw "Unexpected chunk; expected \"RIFF\" in " + reader.GetFilename();
 		reader.Seek(pos);
 		return false;
 	}
@@ -160,7 +164,7 @@ void Sample::ReadCatEntry(FileReader &reader, bool new_format, uint32_t index)
 		this->sample_data.resize(this->size);
 		reader.ReadRaw(this->sample_data.data(), this->sample_data.size());
 
-		this->size += RIFF_HEADER_SIZE;
+		if (!new_format) this->size += RIFF_HEADER_SIZE;
 	}
 
 	if (!new_format) {
@@ -185,6 +189,12 @@ void Sample::ReadCatEntry(FileReader &reader, bool new_format, uint32_t index)
 
 void Sample::WriteSample(FileWriter &writer) const
 {
+	if (this->num_channels == 0) {
+		/* No channels means this is a raw file and should be written as-is. */
+		writer.WriteRaw(this->sample_data.data(), this->sample_data.size());
+		return;
+	}
+
 	writer.WriteDword('FFIR');
 	writer.WriteDword(this->size - 8);
 	writer.WriteDword('EVAW');
