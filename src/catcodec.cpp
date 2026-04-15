@@ -55,8 +55,9 @@ static void ReadCat(Samples &samples, FileReader &reader)
 		samples.emplace_back(reader);
 	}
 
-	for (auto iter = samples.begin(); iter != samples.end(); ++iter) {
-		iter->ReadCatEntry(reader, new_format);
+	uint32_t index = 0;
+	for (auto iter = samples.begin(); iter != samples.end(); ++iter, ++index) {
+		iter->ReadCatEntry(reader, new_format, index);
 		ShowProgress();
 	}
 }

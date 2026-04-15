@@ -65,16 +65,18 @@ public:
 	 * This function has some very strict tests on validity of the input file.
 	 * @param reader     place to read the sample from
 	 * @param check_size whether to check that our size makes sense with the size from the sample
+	 * @return true if the sample was read.
 	 */
-	void ReadSample(FileReader &reader, bool check_size = true);
+	bool ReadSample(FileReader &reader, bool check_size = true);
 
 	/**
 	 * Reads a cat entry from a reader.
 	 * This function has some very strict tests on validity of the input file.
-	 * @param reader     place to read the cat entry from
+	 * @param reader place to read the cat entry from
 	 * @param new_format whether this is the old or new format; there are different strictness tests for both cases
+	 * @param index index of sample in cat header
 	 */
-	void ReadCatEntry(FileReader &reader, bool new_format);
+	void ReadCatEntry(FileReader &reader, bool new_format, uint32_t index);
 
 	/**
 	 * Write a sample to a writer. If only a sample is written to the
