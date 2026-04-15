@@ -28,6 +28,7 @@
  */
 class FileReader {
 	FILE *file;      ///< The file to be read by this instance
+	size_t filesize; ///< The size of the file
 	std::string filename; ///< The filename of the file
 
 public:
@@ -88,6 +89,12 @@ public:
 	 * @return the position in the stream
 	 */
 	uint32_t GetPos();
+
+	/**
+	 * Get the size of the file.
+	 * @return the size of the file
+	 */
+	inline size_t GetSize() const { return this->filesize; }
 
 	/**
 	 * Get the filename of this file.
