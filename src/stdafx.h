@@ -34,25 +34,25 @@
 #include <string>
 
 #if defined(_MSC_VER)
-	#define UNUSED
+#	define UNUSED
 
-	#define fileno _fileno
-	#pragma warning(disable: 4996)   // 'strdup' was declared deprecated
+#	define fileno _fileno
+#	pragma warning(disable : 4996) // 'strdup' was declared deprecated
 #elif defined(__GNUC__)
-	#include <stdint.h>
-	#define UNUSED __attribute__((unused))
+#	include <stdint.h>
+#	define UNUSED __attribute__((unused))
 #else
-	#warning "Unknown compiler type, might not compile!"
-	#include <stdint.h>
-	#define UNUSED
+#	warning "Unknown compiler type, might not compile!"
+#	include <stdint.h>
+#	define UNUSED
 #endif
 
 #if defined(WIN32)
-	#include <io.h>
-	#define isatty _isatty
-	#define unlink _unlink
+#	include <io.h>
+#	define isatty _isatty
+#	define unlink _unlink
 #else
-	#include <unistd.h>
+#	include <unistd.h>
 #endif
 
 #define assert_compile(expr) extern const int __ct_assert__[1 - 2 * !(expr)] UNUSED
