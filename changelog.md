@@ -1,5 +1,12 @@
 ## 1.x
 
+### 1.1 (2026-10-24)
+
+- Feature: Allow en/decoding non-wav audio files
+- Fix: Ignore case of filename extension. (#12)
+- Fix: Catcodec could not decode sample.cat from DOS versions of original data (#9)
+- Fix: Sample data is allowed to be empty (#7)
+
 ### 1.0.5 (2012-04-04)
 
 - Fix: compilation with GCC 4.7
