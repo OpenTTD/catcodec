@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
 		char sfo_file[1024];
 		strncpy(sfo_file, argv[2], sizeof(sfo_file));
 		char *ext = strrchr(sfo_file, '.');
-		if (ext == NULL || strlen(ext) != 4 || strcmp(ext, ".cat") != 0) {
+		if (ext == NULL || strlen(ext) != 4 || strcasecmp(ext, ".cat") != 0) {
 			throw std::string("Unexpected extension; expected \".cat\"");
 		}
 		strcpy(ext, ".sfo");
